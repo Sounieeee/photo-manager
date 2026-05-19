@@ -9,7 +9,7 @@ class AlbumForm(forms.ModelForm):
     
     class Meta:
         model = Album
-        fields = ['title', 'description', 'is_public']
+        fields = ['title', 'description', 'cover_image', 'is_public']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -22,6 +22,10 @@ class AlbumForm(forms.ModelForm):
             }),
             'is_public': forms.CheckboxInput(attrs={
                 'class': 'form-check-input',
+            }),
+            'cover_image': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*',
             }),
         }
 

@@ -19,6 +19,7 @@ class Album(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_public = models.BooleanField(default=False, help_text='Public albums are visible to all users')
+    cover_image = models.ImageField(upload_to='albums/covers/', blank=True, null=True, help_text='Upload a cover photo for this album')
     
     class Meta:
         ordering = ['-created_at']
