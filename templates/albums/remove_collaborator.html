@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Remove Collaborator - Photo Album Manager{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h3 class="mb-0">👋 Remove Collaborator</h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <strong>⚠️ Warning:</strong> This collaborator will lose access to this album!
+                </div>
+
+                <p>Are you sure you want to remove this collaborator?</p>
+
+                <div class="bg-light p-3 rounded mb-3">
+                    <p class="mb-1">
+                        <strong>Username:</strong> {{ object.user.username }}
+                    </p>
+                    <p class="mb-1">
+                        <strong>Email:</strong> {{ object.user.email }}
+                    </p>
+                    <p class="mb-0">
+                        <strong>Role:</strong> {{ object.get_role_display }}
+                    </p>
+                </div>
+
+                <p class="text-muted">
+                    from album <strong>{{ object.album.title }}</strong>
+                </p>
+
+                <form method="post" class="mt-4">
+                    {% csrf_token %}
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            Yes, Remove Collaborator
+                        </button>
+                        <a href="{% url 'albums:album-collaborators' object.album.id %}" class="btn btn-secondary btn-lg">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

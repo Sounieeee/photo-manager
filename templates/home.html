@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Photo Album Manager{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <h1 class="mb-4">Welcome to Photo Album Manager</h1>
+        
+        {% if user.is_authenticated %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">👋 Hello, {{ user.first_name|default:user.username }}!</h5>
+                    <p class="card-text">Organize and share your photos with ease using our Photo Album Manager.</p>
+                    <a href="{% url 'albums:album-list' %}" class="btn btn-primary">View My Albums</a>
+                    <a href="{% url 'albums:album-create' %}" class="btn btn-outline-primary">Create New Album</a>
+                </div>
+            </div>
+        {% else %}
+            <div class="card mb-4 border-primary">
+                <div class="card-body">
+                    <h5 class="card-title">🔐 Get Started</h5>
+                    <p class="card-text">Sign in to create and manage your photo albums securely.</p>
+                    <a href="{% url 'login' %}" class="btn btn-primary btn-lg me-2">Login</a>
+                    <a href="{% url 'register' %}" class="btn btn-outline-primary btn-lg">Register</a>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h2>🎨</h2>
+                        <h5 class="card-title">Easy Organization</h5>
+                        <p class="card-text">Create albums to organize your photos by theme, event, or time period.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h2>👥</h2>
+                        <h5 class="card-title">Share & Collaborate</h5>
+                        <p class="card-text">Invite collaborators to help manage and organize albums together.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h2>☁️</h2>
+                        <h5 class="card-title">Cloud Storage</h5>
+                        <p class="card-text">All photos are stored securely in the cloud with Cloudinary.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h2>🔒</h2>
+                        <h5 class="card-title">Role-Based Access</h5>
+                        <p class="card-text">Control who can view, edit, or manage your albums.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card border-info">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">ℹ️ Features</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">✨ Create and manage albums</li>
+                <li class="list-group-item">📸 Upload high-quality photos</li>
+                <li class="list-group-item">👥 Invite collaborators</li>
+                <li class="list-group-item">🔐 Role-based permissions</li>
+                <li class="list-group-item">☁️ Cloud-based storage</li>
+                <li class="list-group-item">🌍 Share public albums</li>
+                <li class="list-group-item">🏷️ Tag and organize photos</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ album.title }} - Photo Album Manager{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1>{{ album.title }}</h1>
+            <p class="text-muted">
+                {% if album.is_public %}
+                    <span class="badge badge-public">🌍 Public</span>
+                {% else %}
+                    <span class="badge badge-private">🔒 Private</span>
+                {% endif %}
+                by <strong>{{ album.owner.username }}</strong>
+            </p>
+        </div>
+        <div>
+            {% if can_edit %}
+                <a href="{% url 'albums:photo-create' album.id %}" class="btn btn-primary">
+                    ➕ Upload Photo
+                </a>
+            {% endif %}
+            {% if can_edit %}
+                <a href="{% url 'albums:album-edit' album.id %}" class="btn btn-warning">
+                    ✏️ Edit
+                </a>
+            {% endif %}
+            {% if can_delete %}
+                <a href="{% url 'albums:album-delete' album.id %}" class="btn btn-danger">
+                    🗑️ Delete
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if album.description %}
+        <p class="lead">{{ album.description }}</p>
+    {% endif %}
+</div>
+
+<!-- Album Info -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">📊 Album Statistics</h5>
+                <p>
+                    <strong>Total Photos:</strong> {{ photos|length }}<br>
+                    <strong>Created:</strong> {{ album.created_at|date:"F j, Y" }}<br>
+                    <strong>Last Updated:</strong> {{ album.updated_at|date:"F j, Y" }}
+                </p>
+            </div>
+        </div>
+    </div>
+    {% if can_edit %}
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">👥 Collaborators</h5>
+                    <p class="mb-3">
+                        {{ collaborators|length }} collaborator{{ collaborators|pluralize }}
+                    </p>
+                    <a href="{% url 'albums:album-collaborators' album.id %}" class="btn btn-sm btn-outline-primary w-100">
+                        Manage Collaborators
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Photos -->
+<h2 class="mb-3">📸 Photos</h2>
+
+{% if photos %}
+    <div class="photo-grid">
+        {% for photo in photos %}
+            <div class="photo-item">
+                <img src="{{ photo.image.url }}" alt="{{ photo.title|default:'Photo' }}">
+                <div class="photo-overlay">
+                    <div class="btn-group" role="group">
+                        <a href="{{ photo.image.url }}" class="btn btn-sm btn-light" target="_blank" title="View Full">
+                            👁️
+                        </a>
+                        {% if can_edit %}
+                            <a href="{% url 'albums:photo-edit' album.id photo.id %}" class="btn btn-sm btn-light" title="Edit">
+                                ✏️
+                            </a>
+                            <a href="{% url 'albums:photo-delete' album.id photo.id %}" class="btn btn-sm btn-danger" title="Delete">
+                                🗑️
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if photo.title %}
+                    <div class="position-absolute bottom-0 start-0 end-0 bg-dark bg-opacity-75 text-white p-2">
+                        <small>{{ photo.title }}</small>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info text-center" role="alert">
+        <p>No photos in this album yet.</p>
+        {% if can_edit %}
+            <a href="{% url 'albums:photo-create' album.id %}" class="btn btn-primary">
+                Upload Your First Photo
+            </a>
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}

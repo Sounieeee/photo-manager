@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Collaborator - Photo Album Manager{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">➕ Add Collaborator</h3>
+                <small>Album: <strong>{{ album.title }}</strong></small>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.user.id_for_label }}" class="form-label">
+                            Select User <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-control {% if form.user.errors %}is-invalid{% endif %}" 
+                                id="{{ form.user.id_for_label }}" name="user" required>
+                            <option value="">-- Select a user --</option>
+                            {% for user in form.fields.user.queryset %}
+                                <option value="{{ user.id }}">
+                                    {{ user.username }} ({{ user.email }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if form.user.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.user.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Search for a user to add as collaborator</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.role.id_for_label }}" class="form-label">
+                            Role <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-control {% if form.role.errors %}is-invalid{% endif %}" 
+                                id="{{ form.role.id_for_label }}" name="role" required>
+                            <option value="">-- Select role --</option>
+                            <option value="viewer">👁️ Viewer - Can view album and photos only</option>
+                            <option value="editor">✏️ Editor - Can upload and manage photos</option>
+                        </select>
+                        {% if form.role.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.role.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Choose what permissions this collaborator will have</small>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <strong>ℹ️ Role Information:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li><strong>Viewer:</strong> Can only view photos in the album</li>
+                            <li><strong>Editor:</strong> Can upload, edit, and delete photos</li>
+                        </ul>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            ➕ Add Collaborator
+                        </button>
+                        <a href="{% url 'albums:album-collaborators' album.id %}" class="btn btn-secondary btn-lg">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

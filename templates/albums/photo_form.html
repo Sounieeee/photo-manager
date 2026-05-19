@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if form.instance.pk %}Edit{% else %}Upload{% endif %} Photo - Photo Album Manager{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">
+                    {% if form.instance.pk %}
+                        ✏️ Edit Photo
+                    {% else %}
+                        📸 Upload Photo
+                    {% endif %}
+                </h3>
+                <small>Album: <strong>{{ album.title }}</strong></small>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.image.id_for_label }}" class="form-label">
+                            {% if form.instance.pk %}
+                                Change Photo
+                            {% else %}
+                                Select Photo <span class="text-danger">*</span>
+                            {% endif %}
+                        </label>
+                        <input type="file" class="form-control {% if form.image.errors %}is-invalid{% endif %}" 
+                               id="{{ form.image.id_for_label }}" name="image" accept="image/*" {% if not form.instance.pk %}required{% endif %}>
+                        {% if form.image.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.image.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Upload high-quality images (JPG, PNG, GIF, WebP)</small>
+                    </div>
+
+                    {% if form.instance.pk and form.instance.image %}
+                        <div class="mb-3">
+                            <label class="form-label">Current Photo</label>
+                            <div style="max-width: 300px; margin-bottom: 1rem;">
+                                <img src="{{ form.instance.image.url }}" alt="Current photo" style="max-width: 100%; height: auto; border-radius: 4px;">
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.title.id_for_label }}" class="form-label">
+                            Photo Title
+                        </label>
+                        <input type="text" class="form-control {% if form.title.errors %}is-invalid{% endif %}" 
+                               id="{{ form.title.id_for_label }}" name="title" value="{{ form.title.value|default:'' }}">
+                        {% if form.title.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.title.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Optional: Give your photo a memorable name</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.description.id_for_label }}" class="form-label">
+                            Description
+                        </label>
+                        <textarea class="form-control {% if form.description.errors %}is-invalid{% endif %}" 
+                                  id="{{ form.description.id_for_label }}" name="description" rows="3">{{ form.description.value|default:'' }}</textarea>
+                        {% if form.description.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.description.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Optional: Add context about this photo</small>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            {% if form.instance.pk %}Save Changes{% else %}Upload Photo{% endif %}
+                        </button>
+                        <a href="{% url 'albums:album-detail' album.id %}" class="btn btn-secondary btn-lg">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
