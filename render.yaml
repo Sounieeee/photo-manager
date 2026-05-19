@@ -35,7 +35,6 @@ services:
 databases:
   - name: photo-album-db
     databaseName: photo_manager
-    user: postgres
     region: oregon
     plan: free
     postgresMajorVersion: "15"
