@@ -7,9 +7,12 @@ from django.urls import reverse_lazy  # type: ignore
 from django.http import Http404  # type: ignore
 from django.contrib import messages  # type: ignore
 from django.db.models import Q  # type: ignore
+import logging
 
 from .models import Album, Photo, AlbumCollaborator
 from .forms import AlbumForm, PhotoForm, AlbumCollaboratorForm
+
+logger = logging.getLogger(__name__)
 
 
 # Mixin for checking album access
@@ -107,6 +110,11 @@ class AlbumDetailView(AlbumAccessMixin, DetailView):
         context['collaborators'] = album.collaborators.all()
         context['can_edit'] = album.can_edit(self.request.user)
         context['can_delete'] = album.can_delete(self.request.user)
+        # Provide an explicit photo count to ensure templates show accurate stats
+        try:
+            context['photo_count'] = album.photos.count()
+        except Exception:
+            context['photo_count'] = 0
         return context
 
 
@@ -184,6 +192,20 @@ class PhotoCreateView(AlbumEditMixin, LoginRequiredMixin, CreateView):
         form.instance.uploaded_by = self.request.user
         response = super().form_valid(form)
         messages.success(self.request, "Photo uploaded successfully!")
+        try:
+            # Expose the saved image URL in messages for easier verification in production logs/UI
+            img_url = self.object.image.url
+            messages.info(self.request, f"Uploaded image URL: {img_url}")
+            # Log details for server-side debugging
+            logger.info("Photo uploaded: name=%s url=%s album_id=%s uploaded_by=%s", self.object.image.name, img_url, self.object.album_id, self.request.user.username)
+            try:
+                album_count = self.object.album.photos.count()
+                logger.info("Album %s now has %d photos", self.object.album_id, album_count)
+            except Exception:
+                logger.debug("Could not compute album photo count for album_id=%s", self.object.album_id)
+        except Exception:
+            # If the storage backend didn't populate a URL, silently continue
+            logger.exception("Failed to read uploaded photo URL after save")
         return response
     
     def get_success_url(self):
